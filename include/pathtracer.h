@@ -3,8 +3,10 @@
 
 #include "primitives.h"
 
+bool rayTriangleIntersect(Ray& ray, Triangle& t, float3& barCoord);
 
-void pathtraceTriangle(Triangle& t, Framebuffer& f);
-Pixel getLight(Ray& ray);
+float3 getBarCoord(Triangle2D& t, int2 p);
+
+void pathtrace(Ray& ray, Mesh& mesh, Framebuffer& f);
 
 #endif

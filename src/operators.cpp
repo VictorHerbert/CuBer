@@ -2,8 +2,8 @@
 
 #include "operators.h"
 
-float3 operator*(const float& a, const float3& b) {
-    return make_float3(a * b.x, a * b.y, a * b.z);
+float2 operator+(const float2& a, const float2& b) {
+    return make_float2(a.x + b.x, a.y + b.y);
 }
 
 float3 operator+(const float3& a, const float3& b) {
@@ -12,6 +12,23 @@ float3 operator+(const float3& a, const float3& b) {
 
 float3 operator-(const float3& a, const float3& b) {
     return make_float3(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+float2 operator*(const float2& a, const float2& b) {
+    return make_float2(a.x * b.x, a.y * b.y);
+}
+
+float2 operator*(const float& a, const float2& b) {
+    return make_float2(a * b.x, a * b.y);
+}
+
+float3 operator*(const float& a, const float3& b) {
+    return make_float3(a * b.x, a * b.y, a * b.z);
+}
+
+float3 normalize(const float3& v) {
+    float len = sqrt(dot(v, v));
+    return make_float3(v.x / len, v.y / len, v.z / len);
 }
 
 float3 cross(const float3& a, const float3& b) {
@@ -26,15 +43,3 @@ float dot(const float3& a, const float3& b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-float3 normalize(const float3& v) {
-    float len = sqrt(dot(v, v));
-    return make_float3(v.x / len, v.y / len, v.z / len);
-}
-
-float crossProduct(float2 a, float2 b) {
-    return a.x * b.y - a.y * b.x;
-}
-
-int crossProduct(int2 a, int2 b) {
-    return a.x * b.y - a.y * b.x;
-}

@@ -29,7 +29,7 @@ int main(){
         data->function();
         if(data->error_count != 0){
             vtest::fail_count++;
-            std::cout << RED << "FAILED\n" << RESET;
+            std::cout << RED << "FAILED" << RESET << std::endl;
         }
         /*else if(data->assert_count == 0){
             vtest::not_implemented_count++;
@@ -37,7 +37,7 @@ int main(){
         }*/
         else{
             vtest::success_count++;
-            std::cout << GREEN << "PASSED\n" << RESET;
+            std::cout << GREEN << "PASSED" << RESET << std::endl;
         }
         vtest::test_count++;
     }

@@ -14,8 +14,14 @@ struct  __attribute__((packed)) Pixel{
 struct Triangle {
     float3 v[3];
     float2 uv[3];
+    float3 normal;
     Material mat;
     int id;
+};
+
+struct Mesh{
+    size_t size;
+    Triangle* triangles;
 };
 
 struct Ray {    
@@ -34,8 +40,7 @@ struct Camera{
 };
 
 struct Framebuffer{
-    int width;
-    int height;
+    float2 size;
     Pixel* data;
     float* zbuffer;
 
@@ -44,7 +49,6 @@ struct Framebuffer{
     void save(std::string filename);    
 };
 
-void putPixel(Framebuffer& f, int2 pos, Pixel& color, float depth = 1e8);
+void putPixel(Framebuffer& f, int2 pos, Pixel& color);
 
 #endif
-

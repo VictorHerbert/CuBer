@@ -59,22 +59,21 @@ std::vector<Triangle> parse_obj(std::string filename){
             continue;
         else if(cmd == "f"){
             Triangle t;
-
+            //std::cout << "T" << tri.size() << std::endl;
             for(int i = 0; i < 3; i++){
                 int v, vt, vn;
                 iss >> v >> vt >> vn;
                 t.v[i] = vertexes[v-1];
                 t.uv[i] = uv[vt-1];
+                //std::cout << v-1 << ": " << t.v[i].x << " " << t.v[i].y << " " << t.v[i].z << std::endl;
             }
             tri.push_back(t);
-
         }
         else{
             std::cout << "Unrecognized instruction:" << cmd << std::endl;
             break;
         }
-    }
-    
+    }    
 
     file.close();
     return tri;

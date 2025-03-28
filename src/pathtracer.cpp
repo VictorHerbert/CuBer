@@ -6,60 +6,63 @@
 #include "primitives.h"
 #include "operators.h"
 
-void pathtraceTriangle(Triangle& t, Framebuffer& f) {    
-    // Set random color for this triangle (you can later replace this with a texture lookup)
-    Pixel tcol = {rand() % 256, rand() % 256, rand() % 256};  // Random RGB color for now
 
-    // Convert UVs to framebuffer coordinates
-    Triangle2D uv;
-    for (int i = 0; i < 3; i++) {
-        uv.v[i].x = static_cast<int>(t.uv[i].x * f.width);
-        uv.v[i].y = static_cast<int>(t.uv[i].y * f.height);
+bool rayTriangleIntersect(Ray& ray, Triangle& t, float3& barCoord) {
+    float3 edge1 = t.v[1]-t.v[0];
+    float3 edge2 = t.v[2]-t.v[0];
+
+    float3 h = cross(ray.direction, edge2);
+    float a = dot(edge1, h);
+
+    if (std::abs(a) < 1e-6f)
+        return false;
+
+    float f = 1.0f / a;
+    float3 s = ray.origin - t.v[0];
+    float u = f * dot(s, h);
+
+    if (u < 0.0f || u > 1.0f)
+        return false;
+
+    float3 q = cross(s, edge1);
+    float v = f * dot(ray.direction, q);
+
+    if (v < 0.0f || u + v > 1.0f)
+        return false;
+
+    float t_value = f * dot(edge2, q);
+
+    if (t_value > 1e-6f) {
+        barCoord = make_float3(u, v, 1.0f - u - v);
+        return true;
     }
 
-    // Sort vertices by Y-coordinate (bottom to top)
-    if (uv.v[0].y > uv.v[1].y) std::swap(uv.v[0], uv.v[1]);
-    if (uv.v[1].y > uv.v[2].y) std::swap(uv.v[1], uv.v[2]);
-    if (uv.v[0].y > uv.v[1].y) std::swap(uv.v[0], uv.v[1]);
+    return false;
+}
 
-    // Step through the triangle row by row (scanline)
-    for (int y = uv.v[0].y; y <= uv.v[2].y; ++y) {
-        int xLeft, xRight;
-
-        // Determine left and right boundaries of the current scanline
-        if (y >= uv.v[1].y) {
-            // Second half of the triangle: Interpolate between v[1] and v[2] for the left edge,
-            // Interpolate between v[0] and v[2] for the right edge
-            float alpha = float(y - uv.v[1].y) / float(uv.v[2].y - uv.v[1].y);
-            xLeft = int((1 - alpha) * uv.v[1].x + alpha * uv.v[2].x);
-            xRight = int((1 - alpha) * uv.v[0].x + alpha * uv.v[2].x);
-        } else {
-            // First half of the triangle: Interpolate between v[0] and v[1] for the left edge,
-            // Interpolate between v[0] and v[2] for the right edge
-            float alpha = float(y - uv.v[0].y) / float(uv.v[1].y - uv.v[0].y);
-            xLeft = int((1 - alpha) * uv.v[0].x + alpha * uv.v[1].x);
-            xRight = int((1 - alpha) * uv.v[0].x + alpha * uv.v[2].x);
-        }
-
-        // Iterate through each pixel between xLeft and xRight at this y level
-        for (int x = std::min(xLeft, xRight); x <= std::max(xLeft, xRight); ++x) {
-            // Calculate barycentric coordinates for the current pixel
-            float areaTotal = (uv.v[1].y - uv.v[2].y) * (uv.v[0].x - uv.v[2].x) + (uv.v[2].x - uv.v[1].x) * (uv.v[0].y - uv.v[2].y);
-            float area1 = (uv.v[1].y - uv.v[2].y) * (x - uv.v[2].x) + (uv.v[2].x - uv.v[1].x) * (y - uv.v[2].y);
-            float area2 = (uv.v[2].y - uv.v[0].y) * (x - uv.v[2].x) + (uv.v[0].x - uv.v[2].x) * (y - uv.v[2].y);
-            float area3 = areaTotal - area1 - area2;
-
-            float lambda0 = area1 / areaTotal;
-            float lambda1 = area2 / areaTotal;
-            float lambda2 = area3 / areaTotal;
-
-            // Interpolate the UV coordinates based on barycentric coordinates
-            //float2 interpolatedUV = lambda0 * t.uv[0] + lambda1 * t.uv[1] + lambda2 * t.uv[2];
-
-            // Optional: You could use these interpolated UVs for texture mapping or just for color interpolation
-            // For now, just assign a random color to the pixel (replace this with actual texture lookup if needed)
-            putPixel(f, {x, y}, tcol);
-        }
+void pathtrace(Ray& ray, Mesh& mesh, Framebuffer& f){
+    for(int i = 0; i < mesh.size; i++){
+        float3 barCoord;
+        Triangle t = mesh.triangles[i];
+        if(rayTriangleIntersect(ray, t, barCoord)){
+            float2 uv = barCoord.x * t.uv[0] + barCoord.y * t.uv[1] + barCoord.z * t.uv[2];
+            int2 px = {uv.x*f.size.x, uv.y*f.size.y};
+            srand(i);
+            Pixel p = {255, 255, 255};
+            putPixel(f, px, p);
+        }        
     }
 }
 
+float3 getBarCoord(Triangle2D& t, int2 p){
+    float areaTotal = (t.v[1].y - t.v[2].y) * (t.v[0].x - t.v[2].x) + (t.v[2].x - t.v[1].x) * (t.v[0].y - t.v[2].y);
+    float area1 = (t.v[1].y - t.v[2].y) * (p.x - t.v[2].x) + (t.v[2].x - t.v[1].x) * (p.y - t.v[2].y);
+    float area2 = (t.v[2].y - t.v[0].y) * (p.x - t.v[2].x) + (t.v[0].x - t.v[2].x) * (p.y - t.v[2].y);
+    float area3 = areaTotal - area1 - area2;
+
+    return {
+        area1 / areaTotal,
+        area2 / areaTotal,
+        area3 / areaTotal
+    };
+}
