@@ -44,5 +44,5 @@ int main(){
 
     std::cout << "\n" << vtest::success_count << "/" << vtest::test_count << " tests passed" << std::endl;
 
-    return 0;
+    return fail_count;
 }
