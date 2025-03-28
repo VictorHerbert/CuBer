@@ -8,6 +8,7 @@ LDFLAGS =  # Add any required linking flags
 # Directories
 SRC_DIR = src
 BUILD_DIR = build
+OUTPUT_DIR = test/output/
 TEST_DIR = test
 INCLUDE_DIR = include
 
@@ -54,9 +55,10 @@ $(BUILD_DIR)/%.o: $(TEST_DIR)/%.cpp
 
 # Clean up object files and the executable
 clean:
-	@rm -rf $(BUILD_DIR)/* $(TARGET) $(TEST_TARGET)
-	rm -rf test/build
-	mkdir build
+	rm -rf $(BUILD_DIR)/*
+	rm -rf $(OUTPUT_DIR)/*
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(OUTPUT_DIR)
 
 # Phony targets to prevent conflicts with files named "all" or "clean"
 .PHONY: all clean

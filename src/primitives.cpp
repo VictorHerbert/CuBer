@@ -4,13 +4,7 @@
 
 #include "stb_image_write.h"
 
-Framebuffer::Framebuffer(int width, int height, Pixel* data){
-    this->width = width;
-    this->height = height;
-    this->data = data;    
-}
-
-void Framebuffer::to_file(std::string filename){
+void Framebuffer::save(std::string filename){
     stbi_write_png(filename.c_str(), this->width, this->height, this->channels, this->data, this->width * this->channels);
 }
 

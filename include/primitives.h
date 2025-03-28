@@ -9,8 +9,6 @@ typedef int Material;
 
 struct  __attribute__((packed)) Pixel{
     uchar1 r,g,b;
-
-    //Pixel(uchar1 r, uchar1 g, uchar1 b);
 };
 
 struct Triangle {
@@ -43,8 +41,7 @@ struct Framebuffer{
 
     const int channels = 3;
 
-    Framebuffer(int width, int height, Pixel* data);
-    void to_file(std::string filename);    
+    void save(std::string filename);    
 };
 
 void putPixel(Framebuffer& f, int2 pos, Pixel& color, float depth = 1e8);
