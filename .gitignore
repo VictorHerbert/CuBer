@@ -8,3 +8,4 @@
 build/
 *.blend
 *.blend1
+.vscode/settings.json
