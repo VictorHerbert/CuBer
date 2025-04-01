@@ -7,6 +7,7 @@ float3 normalize(const float3& v);
 
 float2 operator+(const float2& a, const float2& b);
 float3 operator+(const float3& a, const float3& b);
+float3 operator+(const float3& a, const float& b);
 float3 operator-(const float3& a, const float3& b);
 
 float2 operator*(const float& a, const float2& b);
@@ -14,6 +15,7 @@ float2 operator*(const float2& a, const float2& b);
 
 float3 operator*(const float& a, const float3& b);
 
+float2 operator*(const float& a, const int2& b);
 
 float3 cross(const float3& a, const float3& b);
 

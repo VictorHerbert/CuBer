@@ -31,6 +31,8 @@ struct Ray {
 
 struct Triangle2D{
     int2 v[3];
+
+    int2 applyUV(float2 uv);
 };
 
 struct Camera{
@@ -43,7 +45,6 @@ struct Framebuffer{
     float2 size;
     Pixel* data;
     float* zbuffer;
-
     const int channels = 3;
 
     void save(std::string filename);    

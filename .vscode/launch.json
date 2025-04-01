@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/test",
             "args": [],
-            "preLaunchTask": "Make",
+            "preLaunchTask": "Make",            
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
