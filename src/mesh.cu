@@ -144,12 +144,14 @@ CudaMesh::CudaMesh(CpuMesh& mesh){
     cudaMemcpy(this->uvProj, mesh.vUvProj.data(), size, cudaMemcpyHostToDevice);
     cudaMemcpy(this->normals, mesh.vNormals.data(), size, cudaMemcpyHostToDevice);
     cudaMemcpy(this->materials, mesh.vMaterials.data(), size, cudaMemcpyHostToDevice);
+
+    this->size = mesh.size;
 }
 
 CudaMesh::~CudaMesh(){
-    cudaFree(&this->triangles);
-    cudaFree(&this->uvs);
-    cudaFree(&this->uvProj);
-    cudaFree(&this->normals);
-    cudaFree(&this->materials);
+    cudaFree(this->triangles);
+    cudaFree(this->uvs);
+    cudaFree(this->uvProj);
+    cudaFree(this->normals);
+    cudaFree(this->materials);
 }

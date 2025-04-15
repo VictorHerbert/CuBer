@@ -25,7 +25,7 @@ int main(){
     for(vtest::current_test_idx = 0; vtest::current_test_idx < vtest::registered_functions.size(); vtest::current_test_idx++){
         vtest::TestData *data = &vtest::registered_functions[vtest::current_test_idx];
 
-        std::cout << data->name << ": ";
+        std::cout << data->name << ":\n";
         data->function();
         if(data->error_count != 0){
             vtest::fail_count++;

@@ -22,6 +22,6 @@ struct WorkingQueue{
 };
 
 void computeGI(CpuMesh& mesh, Framebuffer& f);
-__global__ void computePixelQueue(CudaMesh& mesh, WorkingQueue& queue);
+__global__ void computePixelQueue(int k, CudaMesh mesh, WorkingQueue queue, size_t* size);
 
 #endif

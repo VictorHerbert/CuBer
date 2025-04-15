@@ -1,11 +1,9 @@
 # Compiler and flags
+#NVCC = /usr/local/cuda-12.8/bin/nvcc
 NVCC = nvcc
 CXX = $(NVCC)
-CXXFLAGS_LK = -G -g -O0 -std=c++17 -I./include
-CXXFLAGS = $(CXXFLAGS_LK) -dc -MD -MP  \
-  -gencode=arch=compute_52,code=sm_52 \
-  -gencode=arch=compute_75,code=sm_75 \
-  -gencode=arch=compute_86,code=sm_86
+CXXFLAGS_LK = -w -G -g -O0 -std=c++17 -I./include
+CXXFLAGS = $(CXXFLAGS_LK) -dc
 LDFLAGS =  # Optional linker flags
 
 # Directories
@@ -35,6 +33,9 @@ test: $(TEST_TARGET)
 
 run_tests: $(TEST_TARGET)
 	@./$(TEST_TARGET)
+
+debug: $(TEST_TARGET)
+	cuda-gdb ./$(TEST_TARGET) run
 
 # Link main
 $(TARGET): $(OBJ)
