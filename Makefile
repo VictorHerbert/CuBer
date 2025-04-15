@@ -2,7 +2,7 @@
 #NVCC = /usr/local/cuda-12.8/bin/nvcc
 NVCC = nvcc
 CXX = $(NVCC)
-CXXFLAGS_LK = -w -G -g -O0 -std=c++17 -I./include
+CXXFLAGS_LK = -w -G -g -O0 -std=c++17 -arch=sm_75 -I./include
 CXXFLAGS = $(CXXFLAGS_LK) -dc
 LDFLAGS =  # Optional linker flags
 

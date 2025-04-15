@@ -133,19 +133,21 @@ CpuMesh CpuMesh::fromObj(std::string filename, uint2 fBufferSize){
 }
 
 CudaMesh::CudaMesh(CpuMesh& mesh){
+    printf("Mesh created\n");
+    
     cudaMalloc(&this->triangles, sizeof(Triangle3D) * mesh.vTriangles.size());
     cudaMalloc(&this->uvs, sizeof(Triangle2D) * mesh.vUvs.size());
     cudaMalloc(&this->uvProj, sizeof(Triangle2Di) * mesh.vUvProj.size());
     cudaMalloc(&this->normals, sizeof(float3) * mesh.vNormals.size());
     cudaMalloc(&this->materials, sizeof(Material) * mesh.vMaterials.size());
-
-    cudaMemcpy(this->triangles, mesh.vTriangles.data(), size, cudaMemcpyHostToDevice);
-    cudaMemcpy(this->uvs, mesh.vUvs.data(), size, cudaMemcpyHostToDevice);
-    cudaMemcpy(this->uvProj, mesh.vUvProj.data(), size, cudaMemcpyHostToDevice);
-    cudaMemcpy(this->normals, mesh.vNormals.data(), size, cudaMemcpyHostToDevice);
-    cudaMemcpy(this->materials, mesh.vMaterials.data(), size, cudaMemcpyHostToDevice);
-
+    
     this->size = mesh.size;
+
+    cudaMemcpy(this->triangles, mesh.vTriangles.data(), sizeof(Triangle3D) * size, cudaMemcpyHostToDevice);
+    cudaMemcpy(this->uvs, mesh.vUvs.data(), sizeof(Triangle2D) * size, cudaMemcpyHostToDevice);
+    cudaMemcpy(this->uvProj, mesh.vUvProj.data(), sizeof(Triangle2Di) * size, cudaMemcpyHostToDevice);
+    cudaMemcpy(this->normals, mesh.vNormals.data(), sizeof(float3) * size, cudaMemcpyHostToDevice);
+    cudaMemcpy(this->materials, mesh.vMaterials.data(), sizeof(Material) * size, cudaMemcpyHostToDevice);
 }
 
 CudaMesh::~CudaMesh(){

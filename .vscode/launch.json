@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "CUDA C++: Launch",
+            "name": "CUDA Debug",
             "type": "cuda-gdb",
             "request": "launch",
             "program": "${workspaceFolder}/build/test",
@@ -13,7 +13,7 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "Debug",
+            "name": "GDB Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test",

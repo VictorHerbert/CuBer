@@ -38,10 +38,8 @@ __global__ void computePixelQueue(int k, CudaMesh mesh, WorkingQueue queue, size
         for (pos.y = threadIdx.y + minY; pos.y <= maxY; pos.y += blockDim.y) {
 
             float3 barCoord = getBarCoord(pos, uv);
-            printf("%d %d\n", pos.x, pos.y);
 
             if (barCoordInside(barCoord)) {
-                printf("Added\n");
                 int index = atomicAdd((unsigned long long*) &queue.size, (unsigned long long) 1);
                 queue.elements[queue.size] = {
                     pos,
@@ -49,7 +47,7 @@ __global__ void computePixelQueue(int k, CudaMesh mesh, WorkingQueue queue, size
                     mesh.normals[triIdx]
                 };
 
-                printf("%d  %d\n", pos.x, pos.y);
+                printf("%d %d added to queue\n", pos.x, pos.y);
             }
         }
     }
