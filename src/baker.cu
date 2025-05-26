@@ -3,26 +3,29 @@
 #include "scan.cuh"
 
 
-void computeGI(CpuMesh& mesh, Framebuffer& f){
+void computeLightmap(CpuMesh& mesh, Framebuffer& f){
     WorkingQueue queue(f.size);
     CudaMesh cudaMesh(mesh);
 
-    size_t* size;
-    cudaMallocManaged(&size, sizeof(size_t));
-    *size = 0;
+    size_t* sizePtr;
+    cudaMallocManaged(&sizePtr, sizeof(size_t));
+    *sizePtr = 0;
 
-    printf("Mesh size: %d\n", mesh.size); 
+    computePixelQueue<<<2,3>>>(cudaMesh, queue, sizePtr);
+    cudaDeviceSynchronize();
 
-    computePixelQueue<<<2,3>>>(666, cudaMesh, queue, size);
-    cudaError_t cudaerr = cudaDeviceSynchronize();
-    if (cudaerr != cudaSuccess)
-        printf("kernel launch failed with error \"%s\".\n",
-               cudaGetErrorString(cudaerr));
-
-    printf("QueueSize: %d\n", *size);
+    queue.size = *sizePtr;
 
     std::vector<QueueElement> cpuQueue(queue.size);
-    cudaMemcpy(queue.elements, cpuQueue.data(), queue.size * sizeof(QueueElement), cudaMemcpyDeviceToHost);
+    cudaMemcpy(cpuQueue.data(), queue.elements, queue.size * sizeof(QueueElement), cudaMemcpyDeviceToHost);    
+
+    for(QueueElement el : cpuQueue){
+        f.putPixel(make_int2(el.uv.x, el.uv.y), {255, 255, 255});
+    }
+
+
+    cudaMesh.free();
+    queue.free();
 
     return;
 }

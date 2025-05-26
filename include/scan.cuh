@@ -18,10 +18,10 @@ struct WorkingQueue{
     QueueElement* elements;
 
     WorkingQueue(uint2 fSize);
-    ~WorkingQueue();
+    void free();
 };
 
-void computeGI(CpuMesh& mesh, Framebuffer& f);
-__global__ void computePixelQueue(int k, CudaMesh mesh, WorkingQueue queue, size_t* size);
+void computeLightmap(CpuMesh& mesh, Framebuffer& f);
+__global__ void computePixelQueue(const CudaMesh mesh, const WorkingQueue queue, size_t* sizePtr);
 
 #endif

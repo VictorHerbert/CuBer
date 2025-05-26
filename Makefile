@@ -35,7 +35,10 @@ run_tests: $(TEST_TARGET)
 	@./$(TEST_TARGET)
 
 debug: $(TEST_TARGET)
-	cuda-gdb ./$(TEST_TARGET) run
+	cuda-gdb -ex=run -ex=quit ./$(TEST_TARGET)
+
+sanitize: $(TEST_TARGET)
+	compute-sanitizer --tool memcheck --show-backtrace=yes ./$(TEST_TARGET)
 
 # Link main
 $(TARGET): $(OBJ)

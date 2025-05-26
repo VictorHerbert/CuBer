@@ -42,7 +42,7 @@ struct CpuMesh : public Mesh{
 
 struct CudaMesh : public Mesh{
     CudaMesh (CpuMesh& mesh);
-    ~CudaMesh();
+    void free();
 };
 
 

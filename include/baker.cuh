@@ -4,6 +4,6 @@
 #include "mesh.cuh"
 #include "framebuffer.cuh"
 
-void computeGI(CpuMesh& mesh, Framebuffer& f);
+void computeLightmap(CpuMesh& mesh, Framebuffer& f);
 
 #endif

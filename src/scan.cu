@@ -10,14 +10,11 @@ WorkingQueue::WorkingQueue(uint2 fSize){
     cudaMalloc(&this->elements, this->capacity * sizeof(QueueElement));
 }
 
-WorkingQueue::~WorkingQueue(){
-    cudaFree(elements);
+void WorkingQueue::free(){
+    cudaFree(this->elements);
 }
 
-__global__ void computePixelQueue(int k, CudaMesh mesh, WorkingQueue queue, size_t* size) {
-    //printf("T [%d, %d, %d]>", threadIdx.x, threadIdx.y, threadIdx.z);
-    printf("T [%u, %u, %u]> %lu %u\n", threadIdx.x, threadIdx.y, threadIdx.z, mesh.size, k);
-
+__global__ void computePixelQueue(const CudaMesh mesh, const WorkingQueue queue, size_t* sizePtr) {    
     int triIdx = blockIdx.x;
     if (triIdx >= mesh.size) return;
 
@@ -29,9 +26,6 @@ __global__ void computePixelQueue(int k, CudaMesh mesh, WorkingQueue queue, size
     uint maxX = max(uv.v[0].x, max(uv.v[1].x, uv.v[2].x));
     uint maxY = max(uv.v[0].y, max(uv.v[1].y, uv.v[2].y));
 
-    printf("X: %d %d\n", minX, maxX);
-    printf("Y: %d %d\n", minY, maxY);
-
     uint2 pos;
 
     for (pos.x = threadIdx.x + minX; pos.x <= maxX; pos.x += blockDim.x) {
@@ -40,15 +34,20 @@ __global__ void computePixelQueue(int k, CudaMesh mesh, WorkingQueue queue, size
             float3 barCoord = getBarCoord(pos, uv);
 
             if (barCoordInside(barCoord)) {
-                int index = atomicAdd((unsigned long long*) &queue.size, (unsigned long long) 1);
-                queue.elements[queue.size] = {
+                int index = atomicAdd((unsigned long long*) sizePtr, (unsigned long long) 1);
+                //printf("Index %d: %d %d\n", index, pos.x, pos.y);
+                if(index < 0 || index >= queue.capacity){
+                    printf("LEAK HERE %d\n", index);
+                    continue;
+                }
+                queue.elements[index] = {
                     pos,
                     applyBarCoord(barCoord, tri),
                     mesh.normals[triIdx]
                 };
-
-                printf("%d %d added to queue\n", pos.x, pos.y);
             }
         }
     }
+
+    return;
 }
